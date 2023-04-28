@@ -9,6 +9,7 @@ public class PlayerController : MonoBehaviour {
     private Rigidbody playerRb;
     private float horizontalInput;
     [SerializeField] List<Collider> groundCollisions = new List<Collider>();
+    private Animator animator;
 
     private enum JumpOptions {
         Fart,
@@ -20,7 +21,8 @@ public class PlayerController : MonoBehaviour {
     private void Start()
     {
         playerRb = GetComponent<Rigidbody>();
-        
+        animator = GetComponent<Animator>();
+
         //InvokeRepeating("JumpSneeze", 3, 3);
     }
 
@@ -33,24 +35,29 @@ public class PlayerController : MonoBehaviour {
 
         if (Input.GetMouseButtonDown(0) && IsTouchingAnyGround()) {
         //if (Input.GetKeyDown(KeyCode.Space) && IsTouchingAnyGround()) {
-            Jump(JumpOptions.Sneeze);
+            //Jump(JumpOptions.Sneeze);
+            StartCoroutine(Jump(JumpOptions.Sneeze));
         }
 
         if (Input.GetMouseButtonDown(1) && IsTouchingAnyGround()) {
         //if (Input.GetKeyDown(KeyCode.LeftShift) && IsTouchingAnyGround()) {
-            Jump(JumpOptions.Fart);
+            StartCoroutine(Jump(JumpOptions.Fart));
         }
 
         IsTouchingAnyGround();
     }
 
-    
-    private void Jump(JumpOptions action) {
+
+        IEnumerator Jump(JumpOptions action) {
         Vector3 direction = Vector3.zero;
         if (action == JumpOptions.Sneeze) {
+            animator.SetTrigger("Sneeze");
+            yield return new WaitForSeconds(0.15f);
             direction = Vector3.up;
         }
         else if (action == JumpOptions.Fart) {
+            animator.SetTrigger("Fart");
+            yield return new WaitForSeconds(0.15f);
             direction = Vector3.down;
         }
         playerRb.AddRelativeForce(direction * jumpAmount, ForceMode.Impulse);
