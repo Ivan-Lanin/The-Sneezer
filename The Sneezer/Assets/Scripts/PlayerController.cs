@@ -10,6 +10,7 @@ public class PlayerController : MonoBehaviour {
     private float horizontalInput;
     [SerializeField] List<Collider> groundCollisions = new List<Collider>();
     private Animator animator;
+    private GameObject key;
 
     private enum JumpOptions {
         Fart,
@@ -44,11 +45,13 @@ public class PlayerController : MonoBehaviour {
             StartCoroutine(Jump(JumpOptions.Fart));
         }
 
-        IsTouchingAnyGround();
+        if (key != null) { 
+            key.transform.position = transform.position + new Vector3(2, 0, -0.75f);
+        }
     }
 
 
-        IEnumerator Jump(JumpOptions action) {
+    IEnumerator Jump(JumpOptions action) {
         Vector3 direction = Vector3.zero;
         if (action == JumpOptions.Sneeze) {
             animator.SetTrigger("Sneeze");
@@ -77,9 +80,9 @@ public class PlayerController : MonoBehaviour {
 
 
     private void OnCollisionEnter(Collision collision) {
-        if (collision.collider.CompareTag("Ground")) {
+        if (collision.gameObject.CompareTag("Ground")) {
             groundCollisions.Add(collision.collider);
-            Debug.Log(collision.collider.name + "Enter");
+            //Debug.Log(collision.collider.name + "Enter");
         }
     }
 
@@ -87,6 +90,18 @@ public class PlayerController : MonoBehaviour {
         if (collision.collider.CompareTag("Ground")) {
             groundCollisions.Remove(collision.collider);
         }
-        Debug.Log(collision.collider.name + "Exit");
+        //Debug.Log(collision.collider.name + "Exit");
+    }
+
+    private void OnTriggerEnter(Collider other) {
+        if (other.gameObject.CompareTag("Key")) {
+            key = other.gameObject;
+            other.gameObject.GetComponent<Key>().Picked();
+        }
+
+        if (other.gameObject.CompareTag("Level entrance")) {
+            playerRb.velocity = Vector3.zero;
+            other.gameObject.SetActive(false);
+        }
     }
 }
