@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class Gate : MonoBehaviour
 {
-    private Animator animator;
+    private Animator _animator;
+    private bool _isPassedByPlayer = false;
 
     // Start is called before the first frame update
     void Start()
     {
-        animator = GetComponent<Animator>();
+        _animator = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -19,14 +20,15 @@ public class Gate : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other) {
-        if (other.gameObject.CompareTag("Key")) {
-            animator.SetBool("Unlocked", true);
+        if (other.gameObject.CompareTag("Key") && !_isPassedByPlayer) {
+            _animator.SetBool("Unlocked", true);
             Destroy(other.gameObject);
         }
     }
 
 
     public void Close() {
-        animator.SetBool("Unlocked", false);
+        _animator.SetBool("Unlocked", false);
+        _isPassedByPlayer = true;
     }
 }

@@ -46,7 +46,7 @@ public class PlayerController : MonoBehaviour {
         }
 
         if (key != null) { 
-            key.transform.position = transform.position + new Vector3(2, 0, -0.75f);
+            //key.transform.position = transform.position + new Vector3(2, 0, -0.75f);
         }
     }
 
@@ -75,7 +75,7 @@ public class PlayerController : MonoBehaviour {
     }
 
     private bool IsTouchingAnyGround() {
-        return groundCollisions.Count != 0;
+        return groundCollisions.Count > 0;
     }
 
 
@@ -96,7 +96,7 @@ public class PlayerController : MonoBehaviour {
     private void OnTriggerEnter(Collider other) {
         if (other.gameObject.CompareTag("Key")) {
             key = other.gameObject;
-            other.gameObject.GetComponent<Key>().Picked();
+            other.gameObject.GetComponent<Key>().Picked(playerRb);
         }
 
         if (other.gameObject.CompareTag("Level entrance")) {

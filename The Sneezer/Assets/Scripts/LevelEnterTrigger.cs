@@ -22,7 +22,7 @@ public class LevelEnterTrigger : MonoBehaviour
     private void OnTriggerEnter(Collider other) {
         Debug.Log(other);
         if (other.gameObject.CompareTag("Player")) {
-            cameraFollowMarker.transform.position = new Vector3(0, cameraFollowMarker.transform.position.y, cameraFollowMarker.transform.position.z);
+            cameraFollowMarker.transform.position = new Vector3(cameraFollowMarker.transform.position.x + 29.7f, cameraFollowMarker.transform.position.y, cameraFollowMarker.transform.position.z);
             firstGate.GetComponent<Gate>().Close();
         }
     }

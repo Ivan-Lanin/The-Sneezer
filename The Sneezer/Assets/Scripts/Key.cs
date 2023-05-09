@@ -5,10 +5,13 @@ using UnityEngine;
 public class Key : MonoBehaviour
 {
     private bool isPicked = false;
+    private Rigidbody keyRb;
+
     // Start is called before the first frame update
     void Start()
     {
-        
+        keyRb = GetComponent<Rigidbody>();
+        keyRb.isKinematic = true;
     }
 
     // Update is called once per frame
@@ -19,8 +22,11 @@ public class Key : MonoBehaviour
         }
     }
 
-    public void Picked() {
+    public void Picked(Rigidbody player) {
         isPicked = true;
+        keyRb.isKinematic = false;
         transform.rotation = new Quaternion(0, 180, 0, 1);
+        GetComponent<ConfigurableJoint>().connectedBody = player;
+        
     }
 }
