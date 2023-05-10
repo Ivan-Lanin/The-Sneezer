@@ -88,7 +88,7 @@ ConfigurableJoint:
   m_GameObject: {fileID: 1622082155659426438}
   m_ConnectedBody: {fileID: 0}
   m_ConnectedArticulationBody: {fileID: 0}
-  m_Anchor: {x: 0, y: 0, z: -1}
+  m_Anchor: {x: 0.3, y: 0, z: -1}
   m_Axis: {x: 1, y: 0, z: 0}
   m_AutoConfigureConnectedAnchor: 0
   m_ConnectedAnchor: {x: 0, y: 0, z: 0}

@@ -5,12 +5,15 @@ using UnityEngine;
 public class PlayerController : MonoBehaviour {
 
     [SerializeField] private float speed;
+    [SerializeField] private float rotationSpeed;
     [SerializeField] private float jumpAmount;
     private Rigidbody playerRb;
     private float horizontalInput;
     [SerializeField] List<Collider> groundCollisions = new List<Collider>();
     private Animator animator;
     private GameObject key;
+    private bool isInWater = false;
+    private float rotationBoost = 1;
 
     private enum JumpOptions {
         Fart,
@@ -30,24 +33,23 @@ public class PlayerController : MonoBehaviour {
     // Update is called once per frame
     private void Update()
     {
-        horizontalInput = Input.GetAxis("Horizontal");
-
-        MovePlayer(horizontalInput);
-
-        if (Input.GetMouseButtonDown(0) && IsTouchingAnyGround()) {
+        if (Input.GetMouseButtonDown(0) && (IsTouchingAnyGround() || isInWater)) {
         //if (Input.GetKeyDown(KeyCode.Space) && IsTouchingAnyGround()) {
             //Jump(JumpOptions.Sneeze);
             StartCoroutine(Jump(JumpOptions.Sneeze));
         }
 
-        if (Input.GetMouseButtonDown(1) && IsTouchingAnyGround()) {
+        if (Input.GetMouseButtonDown(1) && (IsTouchingAnyGround() || isInWater)) {
         //if (Input.GetKeyDown(KeyCode.LeftShift) && IsTouchingAnyGround()) {
             StartCoroutine(Jump(JumpOptions.Fart));
         }
+    }
 
-        if (key != null) { 
-            //key.transform.position = transform.position + new Vector3(2, 0, -0.75f);
-        }
+
+    private void FixedUpdate() {
+        horizontalInput = Input.GetAxis("Horizontal");
+
+        MovePlayer(horizontalInput);
     }
 
 
@@ -68,9 +70,9 @@ public class PlayerController : MonoBehaviour {
 
 
     private void MovePlayer(float direction) {
-        playerRb.AddTorque(Vector3.back * speed * direction);
+        playerRb.AddTorque(Vector3.back * (rotationSpeed * rotationBoost) * direction * Time.deltaTime, ForceMode.Acceleration);
         if (IsTouchingAnyGround()) {
-            playerRb.AddForce(Vector3.right * speed * direction);
+            playerRb.AddForce(Vector3.right * speed * direction * Time.deltaTime);
         }
     }
 
@@ -84,13 +86,18 @@ public class PlayerController : MonoBehaviour {
             groundCollisions.Add(collision.collider);
             //Debug.Log(collision.collider.name + "Enter");
         }
+
+        
     }
 
     private void OnCollisionExit(Collision collision) {
         if (collision.collider.CompareTag("Ground")) {
             groundCollisions.Remove(collision.collider);
         }
-        //Debug.Log(collision.collider.name + "Exit");
+
+        if (collision.gameObject.CompareTag("Water")) {
+            isInWater = false;
+        }
     }
 
     private void OnTriggerEnter(Collider other) {
@@ -102,6 +109,18 @@ public class PlayerController : MonoBehaviour {
         if (other.gameObject.CompareTag("Level entrance")) {
             playerRb.velocity = Vector3.zero;
             other.gameObject.SetActive(false);
+        }
+
+        if (other.gameObject.CompareTag("Water")) {
+            isInWater = true;
+            rotationBoost = 1;
+        }
+    }
+
+    private void OnTriggerExit(Collider other) {
+        if (other.gameObject.CompareTag("Water")) {
+            isInWater = false;
+            rotationBoost = 1;
         }
     }
 }
